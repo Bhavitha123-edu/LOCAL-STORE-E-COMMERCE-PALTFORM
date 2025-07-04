@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeighborMart - Your Local Online Store</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        .cart-item-animation {
+            animation: slideIn 0.3s ease-out;
+        }
+        @keyframes slideIn {
+            from { transform: translateX(100px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        .star-rating {
+            color: #ffc107;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Header/Navigation -->
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/00ffd30d-27ff-44cd-b541-d3bbc454e088.png" alt="NeighborMart logo with friendly community store branding in green and blue colors" class="h-8">
+                </div>
+                <nav class="hidden md:flex space-x-8">
+                    <a href="#" class="text-gray-700 hover:text-green-600 px-3 py-2 text-sm font-medium">Home</a>
+                    <a href="#products" class="text-gray-700 hover:text-green-600 px-3 py-2 text-sm font-medium">Shop</a>
+                    <a href="#about" class="text-gray-700 hover:text-green-600 px-3 py-2 text-sm font-medium">About</a>
+                    <a href="#contact" class="text-gray-700 hover:text-green-600 px-3 py-2 text-sm font-medium">Contact</a>
+                </nav>
+                <div class="flex items-center space-x-4">
+                    <button id="cart-button" class="relative text-gray-700 hover:text-green-600">
+                        <i class="fas fa-shopping-cart text-xl"></i>
+                        <span id="cart-count" class="absolute -top-2 -right-2 bg-green-600 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">0</span>
+                    </button>
+                    <button class="text-gray-700 hover:text-green-600">
+                        <i class="fas fa-user text-xl"></i>
+                    </button>
+                    <button class="md:hidden text-gray-700 hover:text-green-600">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="relative bg-green-700 text-white">
+        <div class="max-w-7xl mx-auto px-4 py-20 sm:px-6 lg:px-8">
+            <div class="text-center">
+                <h1 class="text-4xl md:text-5xl font-bold mb-4">Shop Local, Support Community</h1>
+                <p class="text-xl mb-8 max-w-2xl mx-auto">Discover fresh products from your neighborhood at unbeatable prices with convenient home delivery.</p>
+                <a href="#products" class="bg-white text-green-700 font-bold py-3 px-6 rounded-lg hover:bg-gray-100 transition duration-300 inline-block">Shop Now</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Cart Modal -->
+    <div id="cart-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden">
+        <div class="absolute right-0 top-0 h-full w-full md:w-1/2 lg:w-1/3 bg-white shadow-xl overflow-y-auto">
+            <div class="p-4 border-b flex justify-between items-center">
+                <h3 class="text-xl font-bold">Your Cart</h3>
+                <button id="close-cart" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div id="cart-items" class="p-4 space-y-4">
+                <!-- Cart items will be added here dynamically -->
+                <div class="text-center py-10 text-gray-500" id="empty-cart">
+                    <i class="fas fa-shopping-cart text-4xl mb-3"></i>
+                    <p>Your cart is empty</p>
+                </div>
+            </div>
+            <div class="p-4 border-t">
+                <div class="flex justify-between mb-4">
+                    <span class="font-bold">Subtotal:</span>
+                    <span id="cart-subtotal" class="font-bold">$0.00</span>
+                </div>
+                <button class="w-full bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg font-medium">Proceed to Checkout</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <!-- Store Info -->
+        <section class="mb-16 bg-white rounded-lg shadow-sm p-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="text-center">
+                    <div class="text-green-600 text-3xl mb-3">
+                        <i class="fas fa-truck"></i>
+                    </div>
+                    <h3 class="font-bold mb-2">Fast Delivery</h3>
+                    <p class="text-gray-600">Get your order delivered within 24 hours by our local delivery team.</p>
+                </div>
+                <div class="text-center">
+                    <div class="text-green-600 text-3xl mb-3">
+                        <i class="fas fa-leaf"></i>
+                    </div>
+                    <h3 class="font-bold mb-2">Fresh Products</h3>
+                    <p class="text-gray-600">Locally sourced, fresh products from farmers and producers in our community.</p>
+                </div>
+                <div class="text-center">
+                    <div class="text-green-600 text-3xl mb-3">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3 class="font-bold mb-2">Easy Returns</h3>
+                    <p class="text-gray-600">Not satisfied? Return any product within 14 days for a full refund.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Categories Filter -->
+        <section class="mb-8">
+            <h2 class="text-2xl font-bold mb-6">Shop by Category</h2>
+            <div class="flex flex-wrap gap-2">
+                <button class="category-filter px-4 py-2 bg-green-600 text-white rounded-full text-sm font-medium" data-category="all">All</button>
+                <button class="category-filter px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-full text-sm font-medium" data-category="groceries">Groceries</button>
+                <button class="category-filter px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-full text-sm font-medium" data-category="dairy">Dairy</button>
+                <button class="category-filter px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-full text-sm font-medium" data-category="fruits">Fruits</button>
+                <button class="category-filter px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-full text-sm font-medium" data-category="vegetables">Vegetables</button>
+                <button class="category-filter px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-full text-sm font-medium" data-category="bakery">Bakery</button>
+            </div>
+        </section>
+
+        <!-- Price Range Filter -->
+        <section class="mb-12">
+            <h2 class="text-2xl font-bold mb-6">Filter by Price</h2>
+            <div class="w-full max-w-lg">
+                <div class="flex justify-between mb-2">
+                    <span>Min: $<span id="min-price">0</span></span>
+                    <span>Max: $<span id="max-price">50</span></span>
+                </div>
+                <input type="range" id="price-range" min="0" max="50" value="50" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+            </div>
+        </section>
+
+        <!-- Products Section -->
+        <section id="products" class="mb-16">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold">Our Products</h2>
+                <div class="relative">
+                    <select id="sort-select" class="block appearance-none bg-white border border-gray-300 text-gray-700 py-2 px-4 pr-8 rounded leading-tight focus:outline-none focus:border-green-500">
+                        <option value="price-asc">Price: Low to High</option>
+                        <option value="price-desc">Price: High to Low</option>
+                        <option value="popular">Most Popular</option>
+                        <option value="rating">Highest Rating</option>
+                    </select>
+                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div id="products-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                <!-- Product cards will be populated by JavaScript -->
+            </div>
+        </section>
+
+        <!-- About Section -->
+        <section id="about" class="mb-16 bg-white rounded-lg shadow-sm overflow-hidden">
+            <div class="md:flex">
+                <div class="md:w-1/2">
+                    <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/aed4ec95-de70-47a0-80e3-a678dd16f480.png" alt="Interior of NeighborMart store showing well-organized shelves with products and friendly staff assisting customers" class="w-full h-full object-cover">
+                </div>
+                <div class="md:w-1/2 p-8">
+                    <h2 class="text-2xl font-bold mb-4">Our Story</h2>
+                    <p class="text-gray-600 mb-4">NeighborMart was founded in 2010 with the mission to support local producers and provide our community with fresh, high-quality products at fair prices.</p>
+                    <p class="text-gray-600 mb-4">What started as a small family store has grown into a community hub where neighbors meet and local businesses thrive. We're proud to source over 80% of our products from within 50 miles of our store.</p>
+                    <p class="text-gray-600 mb-6">Now we're bringing that same personal touch and local quality to your doorstep with our new online store.</p>
+                    <button class="bg-green-600 hover:bg-green-700 text-white py-2 px-6 rounded-lg font-medium">Learn More</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Reviews Section -->
+        <section class="mb-16">
+            <h2 class="text-2xl font-bold mb-8 text-center">What Our Customers Say</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="bg-white p-6 rounded-lg shadow-sm">
+                    <div class="flex mb-4">
+                        <div class="star-rating">
+                            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                        </div>
+                    </div>
+                    <p class="text-gray-600 mb-4">"The fruits and vegetables are always fresh and much better quality than the big chain stores. Delivery is fast and the drivers are friendly."</p>
+                    <div class="flex items-center">
+                        <div class="w-10 h-10 rounded-full bg-gray-300 mr-3 overflow-hidden">
+                            <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/9ca38330-5b28-4dd6-9014-5c15e8590935.png" alt="Portrait of Sarah J. - happy customer with curly brown hair smiling" class="w-full h-full object-cover">
+                        </div>
+                        <div>
+                            <h4 class="font-bold">Sarah J.</h4>
+                            <p class="text-sm text-gray-500">Verified Buyer</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-sm">
+                    <div class="flex mb-4">
+                        <div class="star-rating">
+                            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                        </div>
+                    </div>
+                    <p class="text-gray-600 mb-4">"I love supporting local businesses, and NeighborMart makes it so easy. The online ordering is simple and my groceries always arrive perfectly packed."</p>
+                    <div class="flex items-center">
+                        <div class="w-10 h-10 rounded-full bg-gray-300 mr-3 overflow-hidden">
+                            <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/87bc5c2c-3131-4fd8-a4da-e8b18643338c.png" alt="Portrait of Michael T. - middle-aged businessman in glasses looking professional" class="w-full h-full object-cover">
+                        </div>
+                        <div>
+                            <h4 class="font-bold">Michael T.</h4>
+                            <p class="text-sm text-gray-500">Verified Buyer</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-sm">
+                    <div class="flex mb-4">
+                        <div class="star-rating">
+                            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i>
+                        </div>
+                    </div>
+                    <p class="text-gray-600 mb-4">"The local honey is amazing! Prices are competitive and the website is easy to use. My only suggestion would be to offer more organic options."</p>
+                    <div class="flex items-center">
+                        <div class="w-10 h-10 rounded-full bg-gray-300 mr-3 overflow-hidden">
+                            <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/1eb39312-2d55-4984-89e5-e2412302eb2a.png" alt="Portrait of Priya K. - young woman with long black hair smiling warmly" class="w-full h-full object-cover">
+                        </div>
+                        <div>
+                            <h4 class="font-bold">Priya K.</h4>
+                            <p class="text-sm text-gray-500">Verified Buyer</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="text-center mt-8">
+                <button class="bg-green-600 hover:bg-green-700 text-white py-2 px-6 rounded-lg font-medium">Write a Review</button>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact" class="bg-white rounded-lg shadow-sm overflow-hidden mb-16">
+            <div class="md:flex">
+                <div class="md:w-1/2 p-8">
+                    <h2 class="text-2xl font-bold mb-4">Get in Touch</h2>
+                    <p class="text-gray-600 mb-6">Have questions about an order or need help finding a product? Our customer service team is here to help.</p>
+                    <div class="space-y-4 mb-8">
+                        <div class="flex items-center">
+                            <i class="fas fa-phone-alt text-green-600 mr-3"></i>
+                            <span>(123) 456-7890</span>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="fas fa-envelope text-green-600 mr-3"></i>
+                            <span>support@neighbormart.com</span>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="fas fa-map-marker-alt text-green-600 mr-3"></i>
+                            <span>123 Main Street, Anytown, USA</span>
+                        </div>
+                    </div>
+                    <h3 class="font-bold mb-3">Store Hours</h3>
+                    <ul class="text-gray-600 space-y-1 mb-6">
+                        <li>Monday - Friday: 8:00 AM - 9:00 PM</li>
+                        <li>Saturday: 9:00 AM - 8:00 PM</li>
+                        <li>Sunday: 10:00 AM - 6:00 PM</li>
+                    </ul>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-600 hover:text-green-600"><i class="fab fa-facebook-f text-xl"></i></a>
+                        <a href="#" class="text-gray-600 hover:text-green-600"><i class="fab fa-twitter text-xl"></i></a>
+                        <a href="#" class="text-gray-600 hover:text-green-600"><i class="fab fa-instagram text-xl"></i></a>
+                    </div>
+                </div>
+                <div class="md:w-1/2">
+                    <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/3483b61f-b932-4675-9ab0-05a427a21406.png" alt="NeighborMart storefront on a sunny day with signage and attractive product displays in the windows" class="w-full h-full object-cover">
+                </div>
+            </div>
+        </section>
+
+        <!-- Order Status Check -->
+        <section class="bg-green-700 text-white rounded-lg p-8 mb-16">
+            <h2 class="text-2xl font-bold mb-4 text-center">Check Your Order Status</h2>
+            <p class="text-center mb-6 max-w-2xl mx-auto">Enter your order number and email address to track your delivery in real-time.</p>
+            <div class="max-w-md mx-auto">
+                <form class="space-y-4">
+                    <div>
+                        <label for="order-number" class="block mb-1">Order Number</label>
+                        <input type="text" id="order-number" class="w-full px-4 py-2 rounded text-gray-900 focus:outline-none focus:ring-2 focus:ring-green-300">
+                    </div>
+                    <div>
+                        <label for="order-email" class="block mb-1">Email Address</label>
+                        <input type="email" id="order-email" class="w-full px-4 py-2 rounded text-gray-900 focus:outline-none focus:ring-2 focus:ring-green-300">
+                    </div>
+                    <button type="submit" class="w-full bg-white text-green-700 py-3 rounded-lg font-medium hover:bg-gray-100 transition duration-300">Track Order</button>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <h3 class="text-lg font-bold mb-4">NeighborMart</h3>
+                    <p class="text-gray-400">Your local community store providing fresh, high-quality products since 2010.</p>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold mb-4">Shop</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white">All Products</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Special Offers</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">New Arrivals</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Gift Cards</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold mb-4">Help</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white">FAQs</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Shipping & Returns</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Privacy Policy</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Terms of Service</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold mb-4">Newsletter</h3>
+                    <p class="text-gray-400 mb-4">Subscribe for weekly deals and local product highlights.</p>
+                    <form class="flex">
+                        <input type="email" placeholder="Your email" class="px-4 py-2 rounded-l text-gray-900 w-full focus:outline-none">
+                        <button type="submit" class="bg-green-600 hover:bg-green-700 px-4 py-2 rounded-r">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400">
+                <p>© 2023 NeighborMart. All rights reserved.</p>
+            </div>
+            <div class="mt-4 flex justify-center space-x-6">
+                <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-facebook-f"></i></a>
+                <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-twitter"></i></a>
+                <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-instagram"></i></a>
+                <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-pinterest"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Sample product data
+        const products = [
+            {
+                id: 1,
+                name: "Organic Apples",
+                description: "Fresh, crisp organic apples from local orchards. Perfect for snacking or baking.",
+                price: 3.99,
+                category: "fruits",
+                image: "https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/7bc12956-d10e-48b7-97a1-99c2ddbbeb58.png",
+                alt: "Fresh red and green organic apples in a wooden basket on a farm",
+                rating: 4.5,
+                popular: true,
+                stock: 15
+            },
+            {
+                id: 2,
+                name: "Whole Grain Bread",
+                description: "Freshly baked whole grain bread with seeds, perfect for sandwiches or toast.",
+                price: 4.49,
+                category: "bakery",
+                image: "https://placehold.co/600x400",
+                alt: "Freshly baked whole grain bread loaf with visible seeds on a cutting board",
+                rating: 4.2,
+                popular: true,
+                stock: 8
+            },
+            {
+                id: 3,
+                name: "Local Honey",
+                description: "Pure, raw honey from local beekeepers. Great for tea and natural remedies.",
+                price: 8.99,
+                category: "groceries",
+                image: "https://placehold.co/600x400",
+                alt: "Glass jar of golden honey with honey dipper and honeycomb on wooden table",
+                rating: 4.9,
+                popular: false,
+                stock: 12
+            },
+            {
+                id: 4,
+                name: "Farm Fresh Eggs",
+                description: "Organic free-range eggs from happy, pasture-raised chickens.",
+                price: 5.49,
+                category: "dairy",
+                image: "https://placehold.co/600x400",
+                alt: "Brown and white farm fresh eggs in a rustic egg carton on a wooden table",
+                rating: 4.7,
+                popular: true,
+                stock: 20
+            },
+            {
+                id: 5,
+                name: "Organic Carrots",
+                description: "Sweet, crunchy organic carrots grown in local organic farms.",
+                price: 2.99,
+                category: "vegetables",
+                image: "https://placehold.co/600x400",
+                alt: "Fresh organic carrots with green tops in a farmers market basket",
+                rating: 4.0,
+                popular: false,
+                stock: 18
+            },
+            {
+                id: 6,
+                name: "Artisan Cheese",
+                description: "Aged cheddar cheese from a local creamery with rich, sharp flavor.",
+                price: 7.99,
+                category: "dairy",
+                image: "https://placehold.co/600x400",
+                alt: "Wedge of artisan cheddar cheese with cheese knife on wooden board",
+                rating: 4.8,
+                popular: true,
+                stock: 5
+            },
+            {
+                id: 7,
+                name: "Organic Spinach",
+                description: "Fresh, tender organic spinach leaves, perfect for salads and cooking.",
+                price: 3.49,
+                category: "vegetables",
+                image: "https://placehold.co/600x400",
+                alt: "Fresh organic spinach leaves in a basket at the farmers market",
+                rating: 4.1,
+                popular: false,
+                stock: 10
+            },
+            {
+                id: 8,
+                name: "Home Baked Cookies",
+                description: "Assortment of homemade chocolate chip and oatmeal raisin cookies.",
+                price: 4.99,
+                category: "bakery",
+                image: "https://placehold.co/600x400",
+                alt: "Assortment of freshly baked cookies on a parchment-lined baking sheet",
+                rating: 4.6,
+                popular: true,
+                stock: 7
+            }
+        ];
+
+        // Shopping cart
+        let cart = [];
+
+        // DOM Elements
+        const productsContainer = document.getElementById('products-container');
+        const cartButton = document.getElementById('cart-button');
+        const closeCart = document.getElementById('close-cart');
+        const cartModal = document.getElementById('cart-modal');
+        const cartItems = document.getElementById('cart-items');
+        const emptyCart = document.getElementById('empty-cart');
+        const cartCount = document.getElementById('cart-count');
+        const cartSubtotal = document.getElementById('cart-subtotal');
+        const priceRange = document.getElementById('price-range');
+        const minPrice = document.getElementById('min-price');
+        const maxPrice = document.getElementById('max-price');
+        const categoryFilters = document.querySelectorAll('.category-filter');
+        const sortSelect = document.getElementById('sort-select');
+
+        // Initialize the app
+        document.addEventListener('DOMContentLoaded', () => {
+            renderProducts(products);
+            setupEventListeners();
+        });
+
+        // Set up event listeners
+        function setupEventListeners() {
+            cartButton.addEventListener('click', toggleCart);
+            closeCart.addEventListener('click', toggleCart);
+            priceRange.addEventListener('input', updatePriceFilter);
+            categoryFilters.forEach(button => {
+                button.addEventListener('click', filterByCategory);
+            });
+            sortSelect.addEventListener('change', sortProducts);
+        }
+
+        // Render products to the page
+        function renderProducts(productsToRender) {
+            productsContainer.innerHTML = '';
+            
+            if (productsToRender.length === 0) {
+                productsContainer.innerHTML = '<p class="col-span-full text-center text-gray-500 py-10">No products match your filters.</p>';
+                return;
+            }
+            
+            productsToRender.forEach(product => {
+                const productCard = document.createElement('div');
+                productCard.className = 'product-card bg-white rounded-lg shadow-sm overflow-hidden transition duration-300';
+                
+                productCard.innerHTML = `
+                    <div class="relative">
+                        <img src="${product.image}" alt="${product.alt}" class="w-full h-48 object-cover">
+                        ${product.popular ? '<span class="absolute top-2 left-2 bg-green-600 text-white text-xs px-2 py-1 rounded">Popular</span>' : ''}
+                        ${product.stock < 10 ? '<span class="absolute top-2 right-2 bg-red-600 text-white text-xs px-2 py-1 rounded">Low Stock</span>' : ''}
+                    </div>
+                    <div class="p-4">
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="font-bold">${product.name}</h3>
+                            <span class="text-green-600 font-bold">$${product.price.toFixed(2)}</span>
+                        </div>
+                        <p class="text-gray-600 text-sm mb-4">${product.description}</p>
+                        <div class="flex items-center justify-between">
+                            <div class="star-rating">
+                                ${renderStars(product.rating)}
+                            </div>
+                            <button class="add-to-cart bg-green-600 hover:bg-green-700 text-white py-1 px-3 rounded text-sm" data-id="${product.id}">
+                                <i class="fas fa-cart-plus mr-1"></i> Add
+                            </button>
+                        </div>
+                    </div>
+                `;
+                
+                productsContainer.appendChild(productCard);
+            });
+            
+            // Add event listeners to the new "Add to Cart" buttons
+            document.querySelectorAll('.add-to-cart').forEach(button => {
+                button.addEventListener('click', addToCart);
+            });
+        }
+
+        // Render star ratings
+        function renderStars(rating) {
+            let stars = '';
+            const fullStars = Math.floor(rating);
+            const hasHalfStar = rating % 1 >= 0.5;
+            
+            for (let i = 1; i <= 5; i++) {
+                if (i <= fullStars) {
+                    stars += '<i class="fas fa-star"></i>';
+                } else if (i === fullStars + 1 && hasHalfStar) {
+                    stars += '<i class="fas fa-star-half-alt"></i>';
+                } else {
+                    stars += '<i class="far fa-star"></i>';
+                }
+            }
+            
+            return stars;
+        }
+
+        // Add product to cart
+        function addToCart(e) {
+            const productId = parseInt(e.target.closest('.add-to-cart').getAttribute('data-id'));
+            const product = products.find(p => p.id === productId);
+            
+            const existingItem = cart.find(item => item.id === productId);
+            
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                cart.push({
+                    ...product,
+                    quantity: 1
+                });
+            }
+            
+            updateCart();
+            showAddToCartNotification(product.name);
+        }
+
+        // Update cart UI
+        function updateCart() {
+            // Update cart count
+            const totalItems = cart.reduce((total, item) => total + item.quantity, 0);
+            cartCount.textContent = totalItems;
+            
+            // Update cart items list
+            if (cart.length === 0) {
+                emptyCart.style.display = 'block';
+                cartItems.innerHTML = '';
+            } else {
+                emptyCart.style.display = 'none';
+                cartItems.innerHTML = '';
+                
+                cart.forEach(item => {
+                    const cartItem = document.createElement('div');
+                    cartItem.className = 'cart-item-animation flex justify-between items-center border-b pb-4';
+                    cartItem.innerHTML = `
+                        <div class="flex items-center">
+                            <img src="${item.image}" alt="${item.alt}" class="w-16 h-16 object-cover rounded mr-4">
+                            <div>
+                                <h4 class="font-bold">${item.name}</h4>
+                                <p class="text-gray-600">$${item.price.toFixed(2)}</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center">
+                            <button class="quantity-btn decrease" data-id="${item.id}">
+                                <i class="fas fa-minus text-sm"></i>
+                            </button>
+                            <span class="mx-2">${item.quantity}</span>
+                            <button class="quantity-btn increase" data-id="${item.id}">
+                                <i class="fas fa-plus text-sm"></i>
+                            </button>
+                            <button class="remove-btn ml-4 text-red-500 hover:text-red-700" data-id="${item.id}">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    `;
+                    cartItems.appendChild(cartItem);
+                });
+                
+                // Update subtotal
+                const subtotal = cart.reduce((total, item) => total + (item.price * item.quantity), 0);
+                cartSubtotal.textContent = `$${subtotal.toFixed(2)}`;
+            }
+            
+            // Add event listeners to quantity buttons
+            document.querySelectorAll('.quantity-btn').forEach(button => {
+                button.addEventListener('click', updateCartItemQuantity);
+            });
+            
+            document.querySelectorAll('.remove-btn').forEach(button => {
+                button.addEventListener('click', removeFromCart);
+            });
+        }
+
+        // Update cart item quantity
+        function updateCartItemQuantity(e) {
+            const productId = parseInt(e.target.closest('button').getAttribute('data-id'));
+            const isIncrease = e.target.closest('button').classList.contains('increase');
+            
+            const cartItem = cart.find(item => item.id === productId);
+            
+            if (isIncrease) {
+                cartItem.quantity += 1;
+            } else {
+                if (cartItem.quantity > 1) {
+                    cartItem.quantity -= 1;
+                }
+            }
+            
+            updateCart();
+        }
+
+        // Remove item from cart
+        function removeFromCart(e) {
+            const productId = parseInt(e.target.closest('button').getAttribute('data-id'));
+            cart = cart.filter(item => item.id !== productId);
+            updateCart();
+        }
+
+        // Toggle cart visibility
+        function toggleCart() {
+            cartModal.classList.toggle('hidden');
+        }
+
+        // Show add to cart notification
+        function showAddToCartNotification(productName) {
+            const notification = document.createElement('div');
+            notification.className = 'fixed bottom-4 right-4 bg-green-600 text-white px-4 py-2 rounded shadow-lg flex items-center';
+            notification.innerHTML = `
+                <i class="fas fa-check-circle mr-2"></i>
+                <span>Added ${productName} to cart</span>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.opacity = '0';
+                setTimeout(() => {
+                    notification.remove();
+                }, 300);
+            }, 2000);
+        }
+
+        // Update price filter display
+        function updatePriceFilter() {
+            const value = priceRange.value;
+            maxPrice.textContent = value;
+            filterProducts();
+        }
+
+        // Filter by category
+        function filterByCategory(e) {
+            // Update active category button
+            categoryFilters.forEach(button => {
+                button.classList.remove('bg-green-600', 'text-white');
+                button.classList.add('bg-gray-200', 'hover:bg-gray-300');
+            });
+            
+            e.target.classList.add('bg-green-600', 'text-white');
+            e.target.classList.remove('bg-gray-200', 'hover:bg-gray-300');
+            
+            filterProducts();
+        }
+
+        // Filter products based on current filters
+        function filterProducts() {
+            const maxPriceValue = parseFloat(priceRange.value);
+            const activeCategory = document.querySelector('.category-filter.bg-green-600')?.dataset.category || 'all';
+            
+            let filtered = products.filter(product => product.price <= maxPriceValue);
+            
+            if (activeCategory !== 'all') {
+                filtered = filtered.filter(product => product.category === activeCategory);
+            }
+            
+            renderProducts(filtered);
+        }
+
+        // Sort products
+        function sortProducts() {
+            const sortOption = sortSelect.value;
+            let sortedProducts = [...products];
+            
+            switch (sortOption) {
+                case 'price-asc':
+                    sortedProducts.sort((a, b) => a.price - b.price);
+                    break;
+                case 'price-desc':
+                    sortedProducts.sort((a, b) => b.price - a.price);
+                    break;
+                case 'popular':
+                    sortedProducts.sort((a, b) => {
+                        if (a.popular && !b.popular) return -1;
+                        if (!a.popular && b.popular) return 1;
+                        return 0;
+                    });
+                    break;
+                case 'rating':
+                    sortedProducts.sort((a, b) => b.rating - a.rating);
+                    break;
+            }
+            
+            renderProducts(sortedProducts);
+        }
+    </script>
+</body>
+</html>
+
